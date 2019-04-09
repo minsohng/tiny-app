@@ -15,16 +15,22 @@ app.get('/', (request, response) => {
 
 app.get('/urls', (request, response) => {
   const templateVars = { urls: urlDatabase };
-  response.render("urls_index", templateVars);
+  response.render('urls_index', templateVars);
 });
 
-app.get("/urls/:shortURL", (request, response) => {
+app.get('/urls/new', (request, response) => {
+  response.render('urls_new')
+});
+
+app.get('/urls/:shortURL', (request, response) => {
   const templateVars = {
     shortURL: request.params.shortURL,
     longURL: urlDatabase[request.params.shortURL]
   }; //
-  response.render("urls_show", templateVars);
+  response.render('urls_show', templateVars);
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
