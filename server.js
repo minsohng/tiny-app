@@ -1,16 +1,20 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 const PORT = 8080;
 
+const functions = require('./lib/functions')
+
 const urlDatabase = {
-  'b2xVn2': "http://www.lighthouselabs.ca",
-  '9sm5xK': "http://www.google.com"
+  'b2xVn2': 'http://www.lighthouselabs.ca',
+  '9sm5xK': 'http://www.google.com'
 };
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
+
+console.log(functions.generateRandomString());
 
 app.get('/', (request, response) => {
   response.send('Hello!');
@@ -33,7 +37,7 @@ app.get('/urls/:shortURL', (request, response) => {
   const templateVars = {
     shortURL: request.params.shortURL,
     longURL: urlDatabase[request.params.shortURL]
-  }; //
+  };
   response.render('urls_show', templateVars);
 });
 
