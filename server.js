@@ -21,6 +21,10 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+app.post('/urls', (request, response) => {
+  console.log(request.body);
+});
+
 app.get('/urls/new', (request, response) => {
   response.render('urls_new')
 });
