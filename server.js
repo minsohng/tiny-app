@@ -47,6 +47,12 @@ app.get('/urls/:shortURL', (request, response) => {
   response.render('urls_show', templateVars);
 });
 
+app.post('/urls/:id', (request, response) => {
+  const newUrl = request.body.longURL;
+  urlDatabase[request.params.id] = newUrl;
+  response.redirect('/urls');
+});
+
 app.post('/urls/:shortURL/delete', (request, response) => {
   delete urlDatabase[request.params.shortURL];
   response.redirect('/urls');
