@@ -20,8 +20,7 @@ app.get('/urls', (request, response) => {
 
 app.get("/urls/:shortURL", (request, response) => {
   let templateVars = { shortURL: request.params.shortURL, longURL: urlDatabase[this.shortURL] };
-  console.log(templateVars);
-  //res.render("urls_show", templateVars);
+  response.render("urls_show", templateVars);
 });
 
 app.listen(PORT, () => {

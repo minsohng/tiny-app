@@ -11,8 +11,10 @@
 <body style="font-size:20px; padding:50px;">
   <% if (urls) { %>
     <% for (let key in urls) { -%>
-      <%= urls[key] %>
+      <li><%= key  %> => <%= urls[key] %></li>
     <% } -%>
   <% } %>
+
+  <a href='#'>Create New URL</a>
 </body>
 </html>
