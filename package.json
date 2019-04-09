@@ -1,0 +1,19 @@
+{
+  "name": "tiny-app",
+  "version": "1.0.0",
+  "description": "## Problem Statement",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minsohng/tiny-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/minsohng/tiny-app/issues"
+  },
+  "homepage": "https://github.com/minsohng/tiny-app#readme"
+}
