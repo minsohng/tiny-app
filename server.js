@@ -14,8 +14,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
-console.log(functions.generateRandomString());
-
 app.get('/', (request, response) => {
   response.send('Hello!');
 });
@@ -26,11 +24,18 @@ app.get('/urls', (request, response) => {
 });
 
 app.post('/urls', (request, response) => {
-  console.log(request.body);
+  const randomString = functions.generateRandomString();
+  urlDatabase[randomString] = request.body.longURL;
+  console.log(urlDatabase);
 });
 
 app.get('/urls/new', (request, response) => {
-  response.render('urls_new')
+  response.render('urls_new');
+});
+
+app.get('/u/:shortURL', (request, response) => {
+  const longURL = urlDatabase[request.params.shortURL];
+  response.redirect(longURL);
 });
 
 app.get('/urls/:shortURL', (request, response) => {
