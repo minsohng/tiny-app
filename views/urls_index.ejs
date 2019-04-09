@@ -10,7 +10,7 @@
 </head>
 <body style="font-size:20px; padding:50px;">
   <% if (urls) { %>
-    <% for (var key in urls) { -%>
+    <% for (let key in urls) { -%>
       <%= urls[key] %>
     <% } -%>
   <% } %>
