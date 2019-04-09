@@ -14,12 +14,15 @@ app.get('/', (request, response) => {
 });
 
 app.get('/urls', (request, response) => {
-  let templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase };
   response.render("urls_index", templateVars);
 });
 
 app.get("/urls/:shortURL", (request, response) => {
-  let templateVars = { shortURL: request.params.shortURL, longURL: urlDatabase[this.shortURL] }; //
+  const templateVars = {
+    shortURL: request.params.shortURL,
+    longURL: urlDatabase[request.params.shortURL]
+  }; //
   response.render("urls_show", templateVars);
 });
 
