@@ -27,6 +27,7 @@ app.post('/urls', (request, response) => {
   const randomString = functions.generateRandomString();
   urlDatabase[randomString] = request.body.longURL;
   console.log(urlDatabase);
+  response.redirect(`/urls/${randomString}`);
 });
 
 app.get('/urls/new', (request, response) => {
