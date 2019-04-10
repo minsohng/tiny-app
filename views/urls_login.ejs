@@ -1,0 +1,14 @@
+
+<% include ./partials/_header %>
+<body>
+  <div>Log in page</div>
+  <form method="POST" action="/login">
+    <label for="email">Enter email:</label>
+    <input class="form-control" type="email" name="email" placeholder="email" autocomplete="off" style="width: 300px; margin: 1em">
+    <label for="password">Enter password:</label>
+    <input class="form-control" type="password" name="password" placeholder="password" autocomplete="off" style="width: 300px; margin: 1em">
+    <button type="submit" class="btn btn-primary">Log in</button>
+  </form>
+</body>
+
+</html>
