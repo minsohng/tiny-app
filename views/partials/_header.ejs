@@ -10,8 +10,8 @@
 </head>
 
 
-<% if (username) { -%>
-  <h1>Hello, <%= username %></h1>
+<% if (user.email) { -%>
+  <h1>Hello, <%= user.email %></h1>
   <form method="POST" action="/logout">
     <button type="submit" class="btn btn-primary">Logout</button>
   </form>
