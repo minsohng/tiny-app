@@ -2,12 +2,11 @@
 <body style="font-size:20px; padding:50px;">
   <h1>Tiny App</h1>
     <a href='/urls/new'>Create New URL</a>
-  <h3>Tiny URL for <%= longURL %></h3>
+  <h3>Tiny URL for <%= longURL %> is <%= shortURL %></h3>
     <form method="POST" action="/urls/<%= shortURL %>">
-      <label for="longURL">Enter a new URL:</label>
+      <label for="longURL">Enter a new URL to edit:</label>
       <input class="form-control" type="text" name="longURL" placeholder="http://" autocomplete="off" style="width: 300px; margin: 1em">
       <button type="submit" class="btn btn-primary">Update</button>
     </form>
-  <%= shortURL %>
 </body>
 </html>

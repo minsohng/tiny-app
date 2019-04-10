@@ -9,7 +9,11 @@
   <title>TinyApp</title>
 </head>
 
+<h1>Hello, <%= username %></h1>
+
 <form method="POST" action="/login">
-  <input class="form-control" type="text" name="username" placeholder="username" autocomplete="off" style="width: 300px; margin: 1em">
-  <button type="submit" class="btn btn-primary">Login</button>
+  <div>
+    <input class="form-control" type="text" name="username" placeholder="username" autocomplete="off" style="width: 300px; margin: 1em">
+    <button type="submit" class="btn btn-primary">Login</button>
+  </div>
 </form>
