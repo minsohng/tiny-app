@@ -4,12 +4,25 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const PORT = 8080;
 
-const functions = require('./lib/functions');
-
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
+
+const userDatabase = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "123"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+module.exports = userDatabase;
+const functions = require('./lib/functions');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -22,7 +35,7 @@ app.get('/', (request, response) => {
 
 app.get('/urls', (request, response) => {
   const templateVars = {
-    username: request.cookies['username'],
+    user: userDatabase[request.cookies['user_id']],
     urls: urlDatabase
   };
   response.render('urls_index', templateVars);
@@ -31,13 +44,12 @@ app.get('/urls', (request, response) => {
 app.post('/urls', (request, response) => {
   const randomString = functions.generateRandomString();
   urlDatabase[randomString] = request.body.longURL;
-  console.log(urlDatabase);
   response.redirect(`/urls/${randomString}`);
 });
 
 app.get('/urls/new', (request, response) => {
   const templateVars = {
-    username: request.cookies['username']
+    user: userDatabase[request.cookies['user_id']]
   };
   response.render('urls_new', templateVars);
 });
@@ -49,7 +61,7 @@ app.get('/u/:id', (request, response) => {
 
 app.get('/urls/:id', (request, response) => {
   const templateVars = {
-    username: request.cookies['username'],
+    user: userDatabase[request.cookies['user_id']],
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id]
   };
@@ -67,13 +79,64 @@ app.post('/urls/:id/delete', (request, response) => {
   response.redirect('/urls');
 });
 
+app.get('/login', (request, response) => {
+  const templateVars = {
+    user: userDatabase[request.cookies['user_id']]
+  };
+  response.render('urls_login', templateVars);
+});
+
 app.post('/login', (request, response) => {
-  response.cookie('username', request.body.username);
-  response.redirect('/urls');
+  const email = request.body.email;
+  const password = request.body.password;
+
+  if (!email || !request.body.password) {
+    return response.status(400).send('Status Code 400: empty email or password');
+  }
+
+  if (!functions.checkEmailExists(email)) {
+    return response.status(403).send('Status Code 403: email cannot be found');
+  }
+
+  if (!functions.checkPasswordMatch(password, email)) {
+    return response.status(403).send('Status Code 403: password is wrong');
+  }
+
+  response.cookie('user_id', functions.getUserId(email));
+  response.redirect('urls');
 });
 
 app.post('/logout', (request, response) => {
-  response.clearCookie('username');
+  response.clearCookie('user_id');
+  response.redirect('/urls');
+});
+
+app.get('/register', (request, response) => {
+  response.render('urls_register');
+});
+
+app.post('/register', (request, response) => {
+
+  const email = request.body.email;
+
+  if (!email || !request.body.password) {
+    return response.status(400).send('Status Code 400: empty email or password');
+
+  }
+
+  if (functions.checkEmailExists(email)) {
+    return response.status(400).send('Status Code 400: email exists in database');
+  }
+
+  const userId = functions.generateRandomString();
+  const newUser = {
+    id: userId,
+    email: email,
+    password: request.body.password
+  }
+  userDatabase[userId] = newUser;
+  response.cookie('user_id', userId);
+
   response.redirect('/urls');
 });
 
@@ -81,3 +144,6 @@ app.post('/logout', (request, response) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+
