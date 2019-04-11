@@ -5,24 +5,9 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const PORT = 8080;
 
-const urlDatabase = {
-  b6UTxQ: { longUrl: 'http://www.lighthouselabs.ca', userId: 'aJ48lW' },
-  i3BoGr: { longUrl: 'https://www.google.ca', userId: 'aJ48lW' },
-  bacaa: { longUrl: 'https://www.google.ca', userId: 'abcabc' }
-};
+const urlDatabase = {};
 
-const userDatabase = {
-  aJ48lW: {
-    id: 'aJ48lW',
-    email: 'user@example.com',
-    password: '123'
-  },
-  abcabc: {
-    id: 'abcabc',
-    email: 'user1@example.com',
-    password: '123'
-  }
-};
+const userDatabase = {};
 
 module.exports = {
   userDatabase: userDatabase,
@@ -129,7 +114,7 @@ app.post('/login', (request, response) => {
     return response.status(403).send('Status Code 403: email cannot be found');
   }
 
-  if (!functions.checkPasswordMatch(password, email)) {
+  if(!bcrypt.compareSync(password, userDatabase[functions.getUserId(email)].password)) {
     return response.status(403).send('Status Code 403: password is wrong');
   }
 
