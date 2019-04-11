@@ -9,21 +9,17 @@
   <title>TinyApp</title>
 </head>
 
-<h1> Tiny App </h1>
-
 
 <% if (user) { -%>
-  <h3>Logged in as <%= user.email %></h3>
+  <h1>Hello, <%= user.email %></h1>
   <form method="POST" action="/logout">
     <button type="submit" class="btn btn-primary">Log out</button>
   </form>
 
 <% } else { -%>
-  <h3>Hello, log in please</h3>
+  <h1>Hello, log in please</h1>
 
-  <div>
-    <a href='/login'>Log in</a> |
-    <a href='/register'>Register</a>
-  </div>
+  <div><a href='/login'>Log in</a></div>
+  <div><a href='/register'>Register</a></div>
 
 <% } -%>
