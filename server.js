@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const PORT = 8080;
 
 const urlDatabase = {
@@ -34,8 +35,6 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
-console.log(urlDatabase);
-
 app.get('/', (request, response) => {
   response.send('Hello!');
 });
@@ -45,7 +44,6 @@ app.get('/urls', (request, response) => {
   const userId = request.cookies.user_id;
 
   const urlDatabase = functions.urlsForUser(userId);
-  console.log(urlDatabase)
 
   const templateVars = {
     user: userDatabase[userId],
@@ -154,6 +152,8 @@ app.get('/register', (request, response) => {
 app.post('/register', (request, response) => {
 
   const email = request.body.email;
+  const password = request.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !request.body.password) {
     return response.status(400).send('Status Code 400: empty email or password');
@@ -168,7 +168,7 @@ app.post('/register', (request, response) => {
   const newUser = {
     id: userId,
     email: email,
-    password: request.body.password
+    password: hashedPassword
   }
   userDatabase[userId] = newUser;
   response.cookie('user_id', userId);
