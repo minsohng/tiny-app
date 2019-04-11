@@ -5,23 +5,28 @@ const cookieParser = require('cookie-parser');
 const PORT = 8080;
 
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  b6UTxQ: { longUrl: 'http://www.lighthouselabs.ca', userId: 'aJ48lW' },
+  i3BoGr: { longUrl: 'https://www.google.ca', userId: 'aJ48lW' },
+  bacaa: { longUrl: 'https://www.google.ca', userId: 'abcabc' }
 };
 
 const userDatabase = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "123"
+  aJ48lW: {
+    id: 'aJ48lW',
+    email: 'user@example.com',
+    password: '123'
   },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+  abcabc: {
+    id: 'abcabc',
+    email: 'user1@example.com',
+    password: '123'
   }
 };
-module.exports = userDatabase;
+
+module.exports = {
+  userDatabase: userDatabase,
+  urlDatabase: urlDatabase
+};
 const functions = require('./lib/functions');
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -29,28 +34,42 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
+console.log(urlDatabase);
+
 app.get('/', (request, response) => {
   response.send('Hello!');
 });
 
 app.get('/urls', (request, response) => {
+
+  const userId = request.cookies.user_id;
+
+  const urlDatabase = functions.urlsForUser(userId);
+  console.log(urlDatabase)
+
   const templateVars = {
-    user: userDatabase[request.cookies['user_id']],
+    user: userDatabase[userId],
     urls: urlDatabase
   };
   response.render('urls_index', templateVars);
 });
 
 app.post('/urls', (request, response) => {
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.redirect('/login');
+  }
   const randomString = functions.generateRandomString();
-  urlDatabase[randomString] = request.body.longURL;
+  urlDatabase[randomString] = {
+    longUrl: request.body.longURL,
+    userId: request.cookies.user_id
+  }
   response.redirect(`/urls/${randomString}`);
 });
 
 app.get('/urls/new', (request, response) => {
 
-  if (!functions.isLoggedin(request.cookies['user_id'])) {
-    return response.redirect('/login');
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.send('You should log in first');
   }
 
   const templateVars = {
@@ -60,26 +79,35 @@ app.get('/urls/new', (request, response) => {
 });
 
 app.get('/u/:id', (request, response) => {
-  const longURL = urlDatabase[request.params.id];
-  response.redirect(longURL);
+  const longUrl = urlDatabase[request.params.id].longUrl;
+  response.redirect(longUrl);
 });
 
 app.get('/urls/:id', (request, response) => {
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.send('You should log in first');
+  }
   const templateVars = {
-    user: userDatabase[request.cookies['user_id']],
+    user: userDatabase[request.cookies.userId],
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id]
+    longURL: urlDatabase[request.params.id].longUrl
   };
   response.render('urls_show', templateVars);
 });
 
 app.post('/urls/:id', (request, response) => {
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.send('You should log in first');
+  }
   const newUrl = request.body.longURL;
-  urlDatabase[request.params.id] = newUrl;
+  urlDatabase[request.params.id].longUrl = newUrl;
   response.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (request, response) => {
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.send('You should log in first');
+  }
   delete urlDatabase[request.params.id];
   response.redirect('/urls');
 });
@@ -112,6 +140,9 @@ app.post('/login', (request, response) => {
 });
 
 app.post('/logout', (request, response) => {
+  if (!functions.isLoggedin(request.cookies.user_id)) {
+    return response.send('You are not even logged in');
+  }
   response.clearCookie('user_id');
   response.redirect('/urls');
 });
