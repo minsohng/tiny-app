@@ -59,7 +59,7 @@ app.get('/urls/new', (request, response) => {
   }
 
   const templateVars = {
-    user: userDatabase[request.cookies.user_id],
+    user: userDatabase[request.session.user_id],
   };
   response.render('urls_new', templateVars);
 });
@@ -74,7 +74,7 @@ app.get('/urls/:id', (request, response) => {
     return response.send('You should log in first');
   }
   const templateVars = {
-    user: userDatabase[request.cookies.user_id],
+    user: userDatabase[request.session.user_id],
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id].longUrl
   };
@@ -100,7 +100,7 @@ app.post('/urls/:id/delete', (request, response) => {
 
 app.get('/login', (request, response) => {
   const templateVars = {
-    user: userDatabase[request.cookies['user_id']]
+    user: userDatabase[request.session.user_id]
   };
   response.render('urls_login', templateVars);
 });
@@ -123,7 +123,6 @@ app.post('/login', (request, response) => {
 
   request.session.user_id =  functions.getUserId(email);
 
-  console.log(request.session)
   response.redirect('urls');
 });
 
