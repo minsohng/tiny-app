@@ -1,6 +1,5 @@
 <% include ./partials/_header %>
 <body style="font-size:20px; padding:50px;">
-    <a href='/urls/new'>Create New URL</a>
   <h3>Tiny URL for <%= longURL %> is <a href="http://localhost:8080/u/<%= shortURL %>">http://localhost:8080/u/<%= shortURL %></a></h3>
     <form method="POST" action="/urls/<%= shortURL %>">
       <label for="longURL">Enter a new URL to edit:</label>

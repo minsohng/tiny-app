@@ -14,6 +14,7 @@
 
 <% if (user) { -%>
   <h3>Logged in as <%= user.email %></h3>
+  <a href='/urls/new'>Create New URL</a>
 
   <form method="POST" action="/logout">
     <button type="submit" class="btn btn-primary">Log out</button>

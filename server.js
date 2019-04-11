@@ -48,8 +48,13 @@ app.post('/urls', (request, response) => {
 });
 
 app.get('/urls/new', (request, response) => {
+
+  if (!functions.isLoggedin(request.cookies['user_id'])) {
+    return response.redirect('/login');
+  }
+
   const templateVars = {
-    user: userDatabase[request.cookies['user_id']]
+    user: userDatabase[request.cookies['user_id']],
   };
   response.render('urls_new', templateVars);
 });
