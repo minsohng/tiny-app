@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const PORT = 8080;
 
@@ -16,7 +16,10 @@ module.exports = {
 const functions = require('./lib/functions');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['hello']
+}));
 
 app.set('view engine', 'ejs');
 
@@ -26,7 +29,7 @@ app.get('/', (request, response) => {
 
 app.get('/urls', (request, response) => {
 
-  const userId = request.cookies.user_id;
+  const userId = request.session.user_id;
 
   const urlDatabase = functions.urlsForUser(userId);
 
@@ -38,25 +41,25 @@ app.get('/urls', (request, response) => {
 });
 
 app.post('/urls', (request, response) => {
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.redirect('/login');
   }
   const randomString = functions.generateRandomString();
   urlDatabase[randomString] = {
     longUrl: request.body.longURL,
-    userId: request.cookies.user_id
+    userId: request.session.user_id
   }
   response.redirect(`/urls/${randomString}`);
 });
 
 app.get('/urls/new', (request, response) => {
 
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.send('You should log in first');
   }
 
   const templateVars = {
-    user: userDatabase[request.cookies['user_id']],
+    user: userDatabase[request.cookies.user_id],
   };
   response.render('urls_new', templateVars);
 });
@@ -67,11 +70,11 @@ app.get('/u/:id', (request, response) => {
 });
 
 app.get('/urls/:id', (request, response) => {
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.send('You should log in first');
   }
   const templateVars = {
-    user: userDatabase[request.cookies.userId],
+    user: userDatabase[request.cookies.user_id],
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id].longUrl
   };
@@ -79,7 +82,7 @@ app.get('/urls/:id', (request, response) => {
 });
 
 app.post('/urls/:id', (request, response) => {
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.send('You should log in first');
   }
   const newUrl = request.body.longURL;
@@ -88,7 +91,7 @@ app.post('/urls/:id', (request, response) => {
 });
 
 app.post('/urls/:id/delete', (request, response) => {
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.send('You should log in first');
   }
   delete urlDatabase[request.params.id];
@@ -118,15 +121,17 @@ app.post('/login', (request, response) => {
     return response.status(403).send('Status Code 403: password is wrong');
   }
 
-  response.cookie('user_id', functions.getUserId(email));
+  request.session.user_id =  functions.getUserId(email);
+
+  console.log(request.session)
   response.redirect('urls');
 });
 
 app.post('/logout', (request, response) => {
-  if (!functions.isLoggedin(request.cookies.user_id)) {
+  if (!functions.isLoggedin(request.session.user_id)) {
     return response.send('You are not even logged in');
   }
-  response.clearCookie('user_id');
+  response.clearCookie('session');
   response.redirect('/urls');
 });
 
@@ -156,7 +161,8 @@ app.post('/register', (request, response) => {
     password: hashedPassword
   }
   userDatabase[userId] = newUser;
-  response.cookie('user_id', userId);
+  request.session.user_id =  functions.getUserId(email);
+
 
   response.redirect('/urls');
 });
