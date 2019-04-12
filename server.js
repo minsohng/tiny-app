@@ -42,7 +42,7 @@ app.get('/', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
     response.redirect('/login');
   } else {
-    response.redirect('urls');
+    response.redirect('/urls');
   }
 });
 
