@@ -29,14 +29,16 @@ app.get('/', (request, response) => {
 
 app.get('/urls', (request, response) => {
 
-  const userId = request.session.user_id;
+  const user_id = request.session.user_id;
 
-  const urlDatabase = functions.urlsForUser(userId);
+  const urls = functions.urlsForUser(user_id);
+
 
   const templateVars = {
-    user: userDatabase[userId],
-    urls: urlDatabase
+    user: userDatabase[request.session.user_id],
+    urls: urls
   };
+
   response.render('urls_index', templateVars);
 });
 
@@ -49,6 +51,7 @@ app.post('/urls', (request, response) => {
     longUrl: request.body.longURL,
     userId: request.session.user_id
   }
+
   response.redirect(`/urls/${randomString}`);
 });
 
@@ -153,13 +156,13 @@ app.post('/register', (request, response) => {
     return response.status(400).send('Status Code 400: email exists in database');
   }
 
-  const userId = functions.generateRandomString();
+  const user_id = functions.generateRandomString();
   const newUser = {
-    id: userId,
+    id: user_id,
     email: email,
     password: hashedPassword
   }
-  userDatabase[userId] = newUser;
+  userDatabase[user_id] = newUser;
   request.session.user_id =  functions.getUserId(email);
 
 

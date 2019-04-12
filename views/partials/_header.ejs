@@ -7,23 +7,28 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
+
 </head>
+
 
 <h1> Tiny App </h1>
 
 
 <% if (user) { -%>
   <h3>Logged in as <%= user.email %></h3>
-  <a href='/urls/new'>Create New URL</a>
 
+  <div>
+    <a href='/urls'>Show URLs</a> |
+    <a href='/urls/new'>Create New URL</a>
+  </div>
   <form method="POST" action="/logout">
     <button type="submit" class="btn btn-primary">Log out</button>
   </form>
 
 <% } else { -%>
 
-  <h3>Hello, log in please</h3>
 
+  <h3>Hello, log in please</h3>
   <div>
     <a href='/login'>Log in</a> |
     <a href='/register'>Register</a>
