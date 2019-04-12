@@ -29,8 +29,6 @@ A full stack web application built with Node and Express that allows users to sh
 
 3. Go to `http://localhost:8080/`
 
-4. **Always** delete cookies before running the server again
-
 
 ## Dependencies
 
