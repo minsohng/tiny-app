@@ -1,23 +1,34 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
+const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const PORT = 8080;
 
 const urlDatabase = {
-  // shorturl: {longUrl, userid}
+/*
+shorturl: {
+    longUrl,
+    userid
+}
+*/
 };
 
 const userDatabase = {
-  // userid: {userid, email, password}
+/*
+userid: {
+    userid,
+    email,
+    password
+}
+*/
 };
 
 module.exports = {
   userDatabase: userDatabase,
   urlDatabase: urlDatabase
 };
-const functions = require('./lib/functions'); // this has to be below module export to run it properly
+const functions = require('./lib/functions'); // this has to be below module export to run it properly due to callback bahavior
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
