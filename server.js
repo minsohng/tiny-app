@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const moment = require('moment');
 const timezone = require('moment-timezone');
 
-// const vancouverTime = timezone(moment()).tz('America/Vancouver').format('YYYY-MM-DD HH:mm zz');
 const PORT = 8080;
 
 const urlDatabase = {
@@ -95,7 +94,7 @@ app.get('/urls/new', (request, response) => {
 
 app.get('/u/:id', (request, response) => {
   if (!urlDatabase[request.params.id]) {
-    return response.render('error_page', {error: 400});
+    return response.render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
   }
   const longUrl = urlDatabase[request.params.id].longUrl;
   response.redirect(longUrl);
@@ -104,6 +103,10 @@ app.get('/u/:id', (request, response) => {
 app.get('/urls/:id', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
     return response.render('error_page', {error: undefined});
+  }
+
+  if (!(urlDatabase[request.params.id].userId === request.session.user_id)) {
+    return response.render('error_page', {error: 403, message: 'Access rejected'})
   }
 
   if (!urlDatabase[request.params.id]) {
