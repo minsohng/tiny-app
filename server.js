@@ -94,7 +94,7 @@ app.get('/urls/new', (request, response) => {
 
 app.get('/u/:id', (request, response) => {
   if (!urlDatabase[request.params.id]) {
-    return response.render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
+    return response.status(400).render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
   }
   const longUrl = urlDatabase[request.params.id].longUrl;
   response.redirect(longUrl);
@@ -106,16 +106,17 @@ app.get('/urls/:id', (request, response) => {
   }
 
   if (!(urlDatabase[request.params.id].userId === request.session.user_id)) {
-    return response.render('error_page', {error: 403, message: 'Access rejected'})
+    return response.status(403).render('error_page', {error: 403, message: 'Access rejected'});
   }
 
   if (!urlDatabase[request.params.id]) {
-    return response.render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
+    return response.status(400).render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
   }
   const templateVars = {
     user: userDatabase[request.session.user_id],
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id].longUrl
+    longURL: urlDatabase[request.params.id].longUrl,
+    time: urlDatabase[request.params.id].time
   };
   response.render('urls_show', templateVars);
 });
