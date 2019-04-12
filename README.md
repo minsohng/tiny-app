@@ -40,4 +40,5 @@ A full stack web application built with Node and Express that allows users to sh
 - cookie-session
 - moment
 - moment-timezone
+- method-override
 
