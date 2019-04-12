@@ -25,13 +25,17 @@ app.set('view engine', 'ejs');
 
 app.get('/', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.redirect('/login');
+    response.redirect('/login');
   } else {
-    return response.redirect('urls');
+    response.redirect('urls');
   }
 });
 
 app.get('/urls', (request, response) => {
+
+  if (!functions.isLoggedin(request.session.user_id)) {
+    return response.render('error_page', {error: undefined});
+  }
 
   const user_id = request.session.user_id;
 
@@ -48,7 +52,7 @@ app.get('/urls', (request, response) => {
 
 app.post('/urls', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.redirect('/login');
+    return response.render('error_page', {error: undefined});
   }
   const randomString = functions.generateRandomString();
   urlDatabase[randomString] = {
@@ -62,7 +66,7 @@ app.post('/urls', (request, response) => {
 app.get('/urls/new', (request, response) => {
 
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.send('You should log in first');
+    return response.redirect('/login');
   }
 
   const templateVars = {
@@ -72,13 +76,20 @@ app.get('/urls/new', (request, response) => {
 });
 
 app.get('/u/:id', (request, response) => {
+  if (!urlDatabase[request.params.id]) {
+    return response.render('error_page', {error: 400});
+  }
   const longUrl = urlDatabase[request.params.id].longUrl;
   response.redirect(longUrl);
 });
 
 app.get('/urls/:id', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.send('You should log in first');
+    return response.render('error_page', {error: undefined});
+  }
+
+  if (!urlDatabase[request.params.id]) {
+    return response.render('error_page', {error: 400});
   }
   const templateVars = {
     user: userDatabase[request.session.user_id],
@@ -90,7 +101,7 @@ app.get('/urls/:id', (request, response) => {
 
 app.post('/urls/:id', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.send('You should log in first');
+    return response.render('error_page', {error: undefined});
   }
   const newUrl = request.body.longURL;
   urlDatabase[request.params.id].longUrl = newUrl;
@@ -99,13 +110,16 @@ app.post('/urls/:id', (request, response) => {
 
 app.post('/urls/:id/delete', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.send('You should log in first');
+    return response.render('error_page', {error: undefined});
   }
   delete urlDatabase[request.params.id];
   response.redirect('/urls');
 });
 
 app.get('/login', (request, response) => {
+  if (functions.isLoggedin(request.session.user_id)) {
+    return response.redirect('/urls');
+  }
   const templateVars = {
     user: userDatabase[request.session.user_id]
   };
@@ -117,15 +131,15 @@ app.post('/login', (request, response) => {
   const password = request.body.password;
 
   if (!email || !request.body.password) {
-    return response.status(400).send('Status Code 400: empty email or password');
+    return response.status(400).render('error_page', {error: 400, message: 'Your email or password is empty'});
   }
 
   if (!functions.checkEmailExists(email)) {
-    return response.status(403).send('Status Code 403: email cannot be found');
+    return response.status(403).render('error_page', {error: 403, message: 'Your email does not exist'});
   }
 
   if(!bcrypt.compareSync(password, userDatabase[functions.getUserId(email)].password)) {
-    return response.status(403).send('Status Code 403: password is wrong');
+    return response.status(403).render('error_page', {error: 403, message: 'Your password does not match'});
   }
 
   request.session.user_id =  functions.getUserId(email);
@@ -135,13 +149,16 @@ app.post('/login', (request, response) => {
 
 app.post('/logout', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
-    return response.send('You are not even logged in');
+    return response.render('error_page', {error: undefined});
   }
   response.clearCookie('session');
   response.redirect('/urls');
 });
 
 app.get('/register', (request, response) => {
+  if (functions.isLoggedin(request.session.user_id)) {
+    return response.redirect('/urls');
+  }
   response.render('urls_register');
 });
 
@@ -152,12 +169,12 @@ app.post('/register', (request, response) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !request.body.password) {
-    return response.status(400).send('Status Code 400: empty email or password');
+    return response.status(400).render('error_page', {error: 400, message: 'Your email or password is empty'});
 
   }
 
   if (functions.checkEmailExists(email)) {
-    return response.status(400).send('Status Code 400: email exists in database');
+    return response.status(400).render('error_page', {error: 400, message: 'Your email does not exist'});
   }
 
   const user_id = functions.generateRandomString();
@@ -168,8 +185,6 @@ app.post('/register', (request, response) => {
   }
   userDatabase[user_id] = newUser;
   request.session.user_id =  functions.getUserId(email);
-
-
   response.redirect('/urls');
 });
 
