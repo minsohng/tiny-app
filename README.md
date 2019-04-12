@@ -27,7 +27,9 @@ A full stack web app built with Node and Express that allows users to shorten lo
 
 2. run `node server.js`
 
-3. Always delete cookies before running app again
+3. Go to `http://localhost:8080/`
+
+4. Always delete cookies before running the app again
 
 
 ## Dependencies
