@@ -100,7 +100,7 @@ app.get('/urls/:id', (request, response) => {
   }
 
   if (!urlDatabase[request.params.id]) {
-    return response.render('error_page', {error: 400});
+    return response.render('error_page', {error: 400, message: 'Url you are looking for doesn\'t exist'});
   }
   const templateVars = {
     user: userDatabase[request.session.user_id],
