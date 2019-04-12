@@ -20,13 +20,13 @@
   <% } else { -%>
     <% if (error === 400) { -%>
         <div class="alert alert-danger" role="alert">
-          400 Bad Request
+          400 Bad Request: <%= message %>
           <a href="/">Home</a>
         </div>
 
     <% } else if (error === 403) { -%>
         <div class="alert alert-danger" role="alert">
-          403 Forbidden
+          403 Forbidden: <%= message %>
           <a href="/">Home</a>
         </div>
 
