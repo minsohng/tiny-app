@@ -38,4 +38,6 @@ A full stack web application built with Node and Express that allows users to sh
 - bcrypt
 - body-parser
 - cookie-session
+- moment
+- moment-timezone
 

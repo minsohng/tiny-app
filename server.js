@@ -64,7 +64,6 @@ app.get('/urls', (request, response) => {
     urls: urls,
     urlDatabase: urlDatabase
   };
-  console.log(urlDatabase);
 
   response.render('urls_index', templateVars);
 });
@@ -192,7 +191,7 @@ app.post('/register', (request, response) => {
   }
 
   if (functions.checkEmailExists(email)) {
-    return response.status(400).render('error_page', {error: 400, message: 'Your email does not exist'});
+    return response.status(400).render('error_page', {error: 400, message: 'Your email exists in database'});
   }
 
   const user_id = functions.generateRandomString();
