@@ -3,7 +3,7 @@
   <div class='col-sm-7 container center-block'>
     <h3>Tiny URL for (<%= longURL %>) is <a href="/u/<%= shortURL %>">/u/<%= shortURL %></a></h3>
     (<%= time %>)
-    <form method="POST" action="/urls/<%= shortURL %>">
+    <form method="POST" action="/urls/<%= shortURL %>?_method=PUT">
       <label for="longURL">Enter a new URL to edit: (always start with 'http://')</label>
       <input class="form-control" type="text" name="longURL" placeholder="http://" autocomplete="off" style="width: 300px; margin-bottom: 1em">
       <button type="submit" class="btn btn-primary">Update</button>

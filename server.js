@@ -1,4 +1,5 @@
 const express = require('express');
+const methodOverride = require('method-override');
 const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
@@ -34,6 +35,7 @@ module.exports = {
 };
 const functions = require('./lib/functions'); // this has to be below module export to run it properly due to callback bahavior
 
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
@@ -121,7 +123,7 @@ app.get('/urls/:id', (request, response) => {
   response.render('urls_show', templateVars);
 });
 
-app.post('/urls/:id', (request, response) => {
+app.put('/urls/:id', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
     return response.render('error_page', {error: undefined});
   }
@@ -130,7 +132,7 @@ app.post('/urls/:id', (request, response) => {
   response.redirect('/urls');
 });
 
-app.post('/urls/:id/delete', (request, response) => {
+app.delete('/urls/:id/delete', (request, response) => {
   if (!functions.isLoggedin(request.session.user_id)) {
     return response.render('error_page', {error: undefined});
   }
