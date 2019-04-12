@@ -5,15 +5,19 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const PORT = 8080;
 
-const urlDatabase = {};
+const urlDatabase = {
+  // shorturl: {longUrl, userid}
+};
 
-const userDatabase = {};
+const userDatabase = {
+  // userid: {userid, email, password}
+};
 
 module.exports = {
   userDatabase: userDatabase,
   urlDatabase: urlDatabase
 };
-const functions = require('./lib/functions');
+const functions = require('./lib/functions'); // this has to be below module export to run it properly
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -32,15 +36,12 @@ app.get('/', (request, response) => {
 });
 
 app.get('/urls', (request, response) => {
-
   if (!functions.isLoggedin(request.session.user_id)) {
     return response.render('error_page', {error: undefined});
   }
 
   const user_id = request.session.user_id;
-
   const urls = functions.urlsForUser(user_id);
-
 
   const templateVars = {
     user: userDatabase[request.session.user_id],
@@ -64,7 +65,6 @@ app.post('/urls', (request, response) => {
 });
 
 app.get('/urls/new', (request, response) => {
-
   if (!functions.isLoggedin(request.session.user_id)) {
     return response.redirect('/login');
   }
@@ -170,7 +170,6 @@ app.post('/register', (request, response) => {
 
   if (!email || !request.body.password) {
     return response.status(400).render('error_page', {error: 400, message: 'Your email or password is empty'});
-
   }
 
   if (functions.checkEmailExists(email)) {
