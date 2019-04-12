@@ -1,6 +1,10 @@
-# Tiny App
+# TinyApp
 
-## Screenshots of Product
+## Overview
+
+A full stack web application built with Node and Express that allows users to shorten long URLs (like bit.ly).
+
+## Screenshots
 
 ### Main page
 !["Main page"](https://github.com/minsohng/tiny-app/blob/master/docs/main-page.png)
@@ -17,11 +21,7 @@
 
 ***
 
-## Problem Statement
-
-A full stack web app built with Node and Express that allows users to shorten long URLs (like bit.ly).
-
-## How to run app
+## Getting Started
 
 1. run `npm install`
 
@@ -29,7 +29,7 @@ A full stack web app built with Node and Express that allows users to shorten lo
 
 3. Go to `http://localhost:8080/`
 
-4. Always delete cookies before running the app again
+4. **Always** delete cookies before running the server again
 
 
 ## Dependencies
