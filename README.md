@@ -17,7 +17,7 @@ A full stack web application built with Node and Express that allows users to sh
 ***
 
 ### List of urls you created
-!["Url listing"](https://github.com/minsohng/tiny-app/blob/master/docs/url-list.png)
+!["Url listing"]()
 
 ***
 
