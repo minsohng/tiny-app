@@ -3,13 +3,18 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
+const timezone = require('moment-timezone');
+
+// const vancouverTime = timezone(moment()).tz('America/Vancouver').format('YYYY-MM-DD HH:mm zz');
 const PORT = 8080;
 
 const urlDatabase = {
 /*
 shorturl: {
     longUrl,
-    userid
+    userid,
+    time
 }
 */
 };
@@ -56,8 +61,10 @@ app.get('/urls', (request, response) => {
 
   const templateVars = {
     user: userDatabase[request.session.user_id],
-    urls: urls
+    urls: urls,
+    urlDatabase: urlDatabase
   };
+  console.log(urlDatabase);
 
   response.render('urls_index', templateVars);
 });
@@ -69,7 +76,8 @@ app.post('/urls', (request, response) => {
   const randomString = functions.generateRandomString();
   urlDatabase[randomString] = {
     longUrl: request.body.longURL,
-    userId: request.session.user_id
+    userId: request.session.user_id,
+    time: timezone(moment()).tz('America/Vancouver').format('YYYY-MM-DD HH:mm zz')
   }
 
   response.redirect(`/urls/${randomString}`);
