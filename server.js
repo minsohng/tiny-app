@@ -24,7 +24,11 @@ app.use(cookieSession({
 app.set('view engine', 'ejs');
 
 app.get('/', (request, response) => {
-  response.send('Hello!');
+  if (!functions.isLoggedin(request.session.user_id)) {
+    return response.redirect('/login');
+  } else {
+    return response.redirect('urls');
+  }
 });
 
 app.get('/urls', (request, response) => {
